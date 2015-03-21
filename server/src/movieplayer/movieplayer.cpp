@@ -8,6 +8,7 @@ MoviePlayer::MoviePlayer(QWidget *parent) :
     movie(NULL),
     camara(NULL),
     captureBuffer(NULL),
+    server(NULL),
     label(NULL) {
 
         ui->setupUi(this);
@@ -16,8 +17,8 @@ MoviePlayer::MoviePlayer(QWidget *parent) :
 
         // Añadir widgets
         ui->toolBarInferior->addWidget(&slider);
-        ui->statusBar->addWidget(&velocidad);
-        ui->statusBar->addPermanentWidget(&tiempo);
+        ui->statusBar->addWidget(&statusIzda);
+        ui->statusBar->addPermanentWidget(&statusDcha);
 
         // Preferencias
         if (preferencias.value("auto-reproduccion").toBool())
@@ -54,6 +55,11 @@ MoviePlayer::~MoviePlayer() {
     if (captureBuffer) {
         delete captureBuffer;
         captureBuffer = NULL;
+    }
+
+    if (server) {
+        delete server;
+        server = NULL;
     }
 
     speed = 0;
@@ -97,11 +103,11 @@ void MoviePlayer::limpiarMovie() {
 
         speed = 100;
         slider.setValue(0);
-        tiempo.setText("");
-        velocidad.setText("");
         this->setWindowTitle(WINDOW_TITLE);
     }
 
+    statusIzda.setText("");
+    statusDcha.setText("");
     activarFuncionalidades(false);
     crearLabel();
 }
@@ -123,6 +129,18 @@ void MoviePlayer::limpiarCamara() {
 }
 
 
+void MoviePlayer::limpiarServer() {
+
+    if (server) {
+        delete server;
+        server = NULL;
+    }
+
+    //statusIzda.setText("");
+    //statusDcha.setText("");
+}
+
+
 void MoviePlayer::activarFuncionalidades(bool cond) {
 
     ui->actionCerrar->setEnabled(cond);
@@ -138,7 +156,7 @@ void MoviePlayer::activarFuncionalidades(bool cond) {
     ui->actionRetroceder->setEnabled(cond);
     ui->actionSiguienteFotograma->setEnabled(cond);
     ui->actionAnteriorFotograma->setEnabled(cond);
-    ui->menuVelocidad->setEnabled(cond);
+    ui->menustatusIzda->setEnabled(cond);
     ui->actionCapturarPantalla->setEnabled(cond);
     ui->actionAjustarVentana->setEnabled(cond);
         ui->actionAjustarVentana->setChecked(false);
@@ -149,7 +167,7 @@ void MoviePlayer::activarFuncionalidades(bool cond) {
 void MoviePlayer::updateVelocidad() {
 
     movie->setSpeed(speed);
-    velocidad.setText("Velocidad: " + QString::number(speed) + "%");
+    statusIzda.setText("Velocidad: " + QString::number(speed) + "%");
 }
 
 
@@ -172,7 +190,7 @@ void MoviePlayer::updateFrameSlider() {
     // Actualizar tiempo
     int total = movie->frameCount() * movie->nextFrameDelay() / 1000;
     int actual = movie->currentFrameNumber() * movie->nextFrameDelay() / 1000;
-    tiempo.setText(QString::number(actual) + " / " + QString::number(total)+ "s");
+    statusDcha.setText(QString::number(actual) + " / " + QString::number(total)+ "s");
 }
 
 
@@ -295,10 +313,20 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
 
 void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
 
+    // Borrar cualquier cosa anterior
+    on_actionCerrar_triggered();
+
+    server = new QTcpServer(this);
+
 }
 
 
-void MoviePlayer::on_actionCerrar_triggered() { limpiarMovie(); limpiarCamara(); }
+void MoviePlayer::on_actionCerrar_triggered() {
+
+    limpiarMovie();
+    limpiarCamara();
+    limpiarServer();
+}
 
 
 void MoviePlayer::on_actionSalir_triggered() { qApp->quit(); }

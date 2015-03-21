@@ -12,6 +12,8 @@
 #include <QCameraInfo>
 #include <QPainter>
 #include <QTime>
+#include <QTcpServer>
+#include <QNetworkSession>
 
 #include "base.hpp"
 #include "movie.hpp"
@@ -36,8 +38,9 @@ class MoviePlayer : public QMainWindow {
         Movie *movie;
         QCamera *camara;
         CaptureBuffer *captureBuffer;
+        QTcpServer *server;
         QLabel *label;
-        QLabel velocidad, tiempo;
+        QLabel statusIzda, statusDcha;
         Slider slider;
         QSettings preferencias;
         QPixmap pixmap;
@@ -45,6 +48,7 @@ class MoviePlayer : public QMainWindow {
         void crearLabel();
         void limpiarMovie();
         void limpiarCamara();
+        void limpiarServer();
         void activarFuncionalidades(bool cond);
         void updateVelocidad();
 
