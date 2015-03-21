@@ -65,6 +65,7 @@
     </property>
     <addaction name="actionAbrir"/>
     <addaction name="actionCapturarVideo"/>
+    <addaction name="actionCapturarDesdeRed"/>
     <addaction name="separator"/>
     <addaction name="actionCerrar"/>
     <addaction name="actionSalir"/>
@@ -164,6 +165,7 @@
    </attribute>
    <addaction name="actionAbrir"/>
    <addaction name="actionCapturarVideo"/>
+   <addaction name="actionCapturarDesdeRed"/>
    <addaction name="actionCerrar"/>
   </widget>
   <widget class="QToolBar" name="toolBarInferior">
@@ -505,6 +507,14 @@
   <action name="actionDispositivos">
    <property name="text">
     <string>Dispositivos</string>
+   </property>
+  </action>
+  <action name="actionCapturarDesdeRed">
+   <property name="text">
+    <string>Capturar desde red</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
    </property>
   </action>
  </widget>

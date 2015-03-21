@@ -59,6 +59,7 @@ class MoviePlayer : public QMainWindow {
         // Archivo
         void on_actionAbrir_triggered();
         void on_actionCapturarVideo_triggered();
+        void on_actionCapturarDesdeRed_triggered();
         void on_actionCerrar_triggered();
         void on_actionSalir_triggered();
 

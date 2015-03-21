@@ -26,6 +26,7 @@ MoviePlayer::MoviePlayer(QWidget *parent) :
         // Añadir iconos
         ui->actionAbrir->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
         ui->actionCapturarVideo->setIcon(style()->standardIcon(QStyle::SP_DesktopIcon));
+        ui->actionCapturarDesdeRed->setIcon(style()->standardIcon(QStyle::SP_DriveNetIcon));
         ui->actionCerrar->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
         ui->actionReproducir->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
         ui->actionPausar->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
@@ -251,7 +252,6 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
     // Borrar camara anterior
     on_actionCerrar_triggered();
 
-
     // Abrir camara por defecto o guardada en preferencias
     QString ruta = preferencias.value("dispositivo").toString();
 
@@ -290,6 +290,11 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
     ui->actionCerrar->setEnabled(true);
     ui->actionCapturarPantalla->setEnabled(true);
     connect(captureBuffer, SIGNAL(imagenChanged(QImage)), this, SLOT(updateImagen(QImage)));
+}
+
+
+void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
+
 }
 
 
