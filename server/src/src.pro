@@ -8,12 +8,13 @@ TARGET = Server
 CONFIG+=ordered
 TEMPLATE = app
 
-INCLUDEPATH += $$PWD/acerca
-INCLUDEPATH += $$PWD/capturebuffer
-INCLUDEPATH += $$PWD/dispositivos
-INCLUDEPATH += $$PWD/movie
-INCLUDEPATH += $$PWD/movieplayer
-INCLUDEPATH += $$PWD/slider
+INCLUDEPATH += $$PWD/acerca \
+    $$PWD/capturebuffer \
+    $$PWD/dispositivos \
+    $$PWD/movie \
+    $$PWD/movieplayer \
+    $$PWD/slider \
+    $$PWD/puerto
 
 SOURCES += main.cpp\
     acerca/acerca.cpp \
@@ -21,7 +22,8 @@ SOURCES += main.cpp\
     dispositivos/dispositivos.cpp \
     slider/slider.cpp \
     movie/movie.cpp \
-    movieplayer/movieplayer.cpp
+    movieplayer/movieplayer.cpp \
+    puerto/puerto.cpp
 
 HEADERS  += base.hpp \
     acerca/acerca.hpp \
@@ -29,8 +31,10 @@ HEADERS  += base.hpp \
     dispositivos/dispositivos.hpp \
     slider/slider.hpp \
     movie/movie.hpp \
-    movieplayer/movieplayer.hpp
+    movieplayer/movieplayer.hpp \
+    puerto/puerto.hpp
 
 FORMS    += acerca/acerca.ui \
     dispositivos/dispositivos.ui \
-    movieplayer/movieplayer.ui
+    movieplayer/movieplayer.ui \
+    puerto/puerto.ui

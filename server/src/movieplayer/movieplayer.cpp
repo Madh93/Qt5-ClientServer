@@ -318,9 +318,10 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
 
     // Iniciar servidor
     server = new QTcpServer(this);
+    qint16 puerto = preferencias.value("puerto").toInt();
 
     // Mantenerse a la escucha
-    if (!server->listen(QHostAddress("192.168.1.33"))) {
+    if (!server->listen(QHostAddress("192.168.1.33")),puerto) {
         QMessageBox::critical(this, WINDOW_CRITICAL,
                               tr("No se puede iniciar el servidor: %1.").arg(server->errorString()));
         return;
@@ -543,6 +544,16 @@ void MoviePlayer::on_actionDispositivos_triggered() {
         on_actionCapturarVideo_triggered();
     }
 }
+
+
+void MoviePlayer::on_actionEstablecerPuerto_triggered() {
+
+    Puerto w(preferencias.value("puerto").toInt());
+
+    if (w.exec() == QDialog::Accepted)
+        preferencias.setValue("puerto", w.getPuerto());
+}
+
 
 void MoviePlayer::on_actionAutoReproducir_toggled(bool cond) {
 

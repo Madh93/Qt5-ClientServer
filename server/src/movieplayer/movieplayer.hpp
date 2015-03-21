@@ -21,6 +21,7 @@
 #include "slider.hpp"
 #include "dispositivos.hpp"
 #include "acerca.hpp"
+#include "puerto.hpp"
 
 
 namespace Ui {
@@ -95,6 +96,7 @@ class MoviePlayer : public QMainWindow {
 
         // Preferencias
         void on_actionDispositivos_triggered();
+        void on_actionEstablecerPuerto_triggered();
         void on_actionAutoReproducir_toggled(bool cond);
         void on_actionPantallaCompleta_toggled(bool cond);
 

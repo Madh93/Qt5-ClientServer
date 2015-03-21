@@ -127,6 +127,8 @@
      <string>Preferencias</string>
     </property>
     <addaction name="actionDispositivos"/>
+    <addaction name="actionEstablecerPuerto"/>
+    <addaction name="separator"/>
     <addaction name="actionAutoReproducir"/>
     <addaction name="actionPantallaCompleta"/>
    </widget>
@@ -515,6 +517,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="actionEstablecerPuerto">
+   <property name="text">
+    <string>Establecer puerto</string>
    </property>
   </action>
  </widget>
