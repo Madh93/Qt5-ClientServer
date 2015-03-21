@@ -9,8 +9,8 @@
 
 // TÍTULOS DE VENTANA
 
-#define WINDOW_TITLE "Movie Player"
-#define WINDOW_TITLE_OPENED " - Movie Player"
+#define WINDOW_TITLE "Movie Player (Servidor)"
+#define WINDOW_TITLE_OPENED " - Movie Player (Servidor)"
 #define WINDOW_CRITICAL "Error - Movie Player"
 #define WINDOW_WARNING "Aviso - Movie Player"
 #define WINDOW_ABOUT "Acerca de - Movie Player"

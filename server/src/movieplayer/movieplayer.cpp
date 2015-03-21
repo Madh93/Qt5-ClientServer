@@ -136,8 +136,8 @@ void MoviePlayer::limpiarServer() {
         server = NULL;
     }
 
-    //statusIzda.setText("");
-    //statusDcha.setText("");
+    statusIzda.setText("");
+    statusDcha.setText("");
 }
 
 
@@ -156,7 +156,7 @@ void MoviePlayer::activarFuncionalidades(bool cond) {
     ui->actionRetroceder->setEnabled(cond);
     ui->actionSiguienteFotograma->setEnabled(cond);
     ui->actionAnteriorFotograma->setEnabled(cond);
-    ui->menustatusIzda->setEnabled(cond);
+    ui->menuVelocidad->setEnabled(cond);
     ui->actionCapturarPantalla->setEnabled(cond);
     ui->actionAjustarVentana->setEnabled(cond);
         ui->actionAjustarVentana->setChecked(false);
@@ -316,8 +316,25 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
     // Borrar cualquier cosa anterior
     on_actionCerrar_triggered();
 
+    // Iniciar servidor
     server = new QTcpServer(this);
 
+    // Mantenerse a la escucha
+    if (!server->listen(QHostAddress("192.168.1.33"))) {
+        QMessageBox::critical(this, WINDOW_CRITICAL,
+                              tr("No se puede iniciar el servidor: %1.").arg(server->errorString()));
+        return;
+    }
+
+    statusIzda.setText("Dirección IP: " + server->serverAddress().toString());
+    statusDcha.setText("Puerto: " + QString::number(server->serverPort()));
+    qDebug() << server->serverPort();
+    qDebug() << server->serverAddress();
+
+
+    // Ajustes
+    ui->actionCerrar->setEnabled(true);
+    ui->actionCapturarPantalla->setEnabled(true);
 }
 
 
