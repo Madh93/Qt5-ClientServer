@@ -8,6 +8,7 @@ MoviePlayer::MoviePlayer(QWidget *parent) :
     movie(NULL),
     camara(NULL),
     captureBuffer(NULL),
+    socket(NULL),
     label(NULL) {
 
         ui->setupUi(this);
@@ -53,6 +54,11 @@ MoviePlayer::~MoviePlayer() {
     if (captureBuffer) {
         delete captureBuffer;
         captureBuffer = NULL;
+    }
+
+    if (socket) {
+        delete socket;
+        socket = NULL;
     }
 
     speed = 0;
@@ -107,6 +113,15 @@ void MoviePlayer::limpiarMovie() {
 
 
 void MoviePlayer::limpiarCamara() {
+
+    if (socket) {
+        delete socket;
+        socket = NULL;
+    }
+}
+
+
+void MoviePlayer::limpiarSocket() {
 
     if (camara) {
         disconnect(captureBuffer, SIGNAL(imagenChanged(QImage)), this, SLOT(updateImagen(QImage)));
@@ -288,9 +303,11 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
 */
 
 
-    QTcpSocket socket(this);
-    socket.connectToHost(preferencias.value("ip").toString(),
-                         preferencias.value("puerto").toInt());
+    //QTcpSocket socket(this);
+    //socket.connectToHost(preferencias.value("ip").toString(),
+      //                   preferencias.value("puerto").toInt());
+
+    socket = new ClientThread(this);
 
 
     // Ajustes
@@ -300,7 +317,12 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
 }
 
 
-void MoviePlayer::on_actionCerrar_triggered() { limpiarMovie(); limpiarCamara(); }
+void MoviePlayer::on_actionCerrar_triggered() {
+
+    limpiarMovie();
+    limpiarCamara();
+    limpiarSocket();
+}
 
 
 void MoviePlayer::on_actionSalir_triggered() { qApp->quit(); }

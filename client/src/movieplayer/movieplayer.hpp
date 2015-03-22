@@ -21,6 +21,7 @@
 #include "dispositivos.hpp"
 #include "acerca.hpp"
 #include "conexion.hpp"
+#include "clientthread.hpp"
 
 
 namespace Ui {
@@ -38,6 +39,7 @@ class MoviePlayer : public QMainWindow {
         Movie *movie;
         QCamera *camara;
         CaptureBuffer *captureBuffer;
+        ClientThread *socket;
         QLabel *label;
         QLabel velocidad, tiempo;
         Slider slider;
@@ -47,6 +49,7 @@ class MoviePlayer : public QMainWindow {
         void crearLabel();
         void limpiarMovie();
         void limpiarCamara();
+        void limpiarSocket();
         void activarFuncionalidades(bool cond);
         void updateVelocidad();
 
