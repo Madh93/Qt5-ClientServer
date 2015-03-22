@@ -7,6 +7,7 @@ Puerto::Puerto(quint16 current) :
 
         ui->setupUi(this);
         ui->lineEdit->setText(QString::number(current));
+        ui->lineEdit->setValidator(new QIntValidator(1, 65535, this));
 }
 
 

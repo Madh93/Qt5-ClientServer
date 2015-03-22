@@ -251,7 +251,7 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
     // Borrar camara anterior
     on_actionCerrar_triggered();
 
-
+/*
     // Abrir camara por defecto o guardada en preferencias
     QString ruta = preferencias.value("dispositivo").toString();
 
@@ -285,6 +285,13 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
     captureBuffer = new CaptureBuffer;
     camara->setViewfinder(captureBuffer);
     camara->start();
+*/
+
+
+    QTcpSocket socket(this);
+    socket.connectToHost(preferencias.value("ip").toString(),
+                         preferencias.value("puerto").toInt());
+
 
     // Ajustes
     ui->actionCerrar->setEnabled(true);

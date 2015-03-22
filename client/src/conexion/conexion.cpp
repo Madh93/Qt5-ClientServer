@@ -8,6 +8,7 @@ Conexion::Conexion(QString ip, quint16 port) :
         ui->setupUi(this);
         ui->lineEditIP->setText(ip);
         ui->lineEditPort->setText(QString::number(port));
+        ui->lineEditPort->setValidator(new QIntValidator(1, 65535, this));
 }
 
 

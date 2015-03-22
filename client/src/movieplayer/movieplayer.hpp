@@ -12,6 +12,7 @@
 #include <QCameraInfo>
 #include <QPainter>
 #include <QTime>
+#include <QTcpSocket>
 
 #include "base.hpp"
 #include "movie.hpp"
