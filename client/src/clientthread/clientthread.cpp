@@ -74,14 +74,20 @@ void ClientThread::run() {
         }
         */
 
-        //GUARDAR DATOS
+        // Enviar saludo inicial
+        QString saludo = "Saludo terrícula!";
 
+        QByteArray datos;
+        QDataStream out(&datos, QIODevice::WriteOnly);
+        out << (QString)saludo;
 
+        socket.write(datos);
+        socket.waitForBytesWritten();
 
 
         mutex.lock();
-            QString fortune;
-            in >> fortune;
+            //QString fortune;
+            //in >> fortune;
             //emit newFortune(fortune);
 
             cond.wait(&mutex);

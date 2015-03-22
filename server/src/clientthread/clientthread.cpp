@@ -33,6 +33,15 @@ void ClientThread::run() {
 
     qDebug() << socketDescriptor << " se ha conectado...";
 
+    QString recibido;
+    socket->waitForReadyRead(-1);
+    QByteArray datos = socket->readAll();
+    QDataStream in(datos);
+    in >> recibido;
+
+    qDebug() << recibido;
+
+
     /*
     socket.write(dataOut);
     socket.waitForBytesWritten();
