@@ -329,10 +329,11 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
 
     // Iniciar servidor
     server = new QTcpServer(this);
-    qint16 puerto = preferencias.value("puerto").toInt();
 
     // Mantenerse a la escucha
-    if (!server->listen(QHostAddress::AnyIPv4),puerto) {
+    if (!server->listen(QHostAddress::AnyIPv4,
+                        preferencias.value("puerto").toInt())) {
+
         QMessageBox::critical(this, WINDOW_CRITICAL,
                               tr("No se puede iniciar el servidor: %1.").arg(server->errorString()));
         return;
