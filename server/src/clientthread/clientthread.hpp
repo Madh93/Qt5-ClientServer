@@ -3,6 +3,7 @@
 
 #include <QThread>
 #include <QTcpSocket>
+#include <QDebug>
 
 class ClientThread : public QThread {
 
@@ -15,6 +16,10 @@ class ClientThread : public QThread {
     signals:
 
         void error(QTcpSocket::SocketError socketError);
+
+    public slots:
+
+        void disconnected();
 
     public:
 

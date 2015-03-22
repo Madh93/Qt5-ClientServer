@@ -9,6 +9,12 @@ ClientThread::~ClientThread() {
 
 }
 
+void ClientThread::disconnected() {
+
+    qDebug() << socketDescriptor << " se ha desconectado...";
+    //socket->deleteLater();
+}
+
 
 void ClientThread::run() {
 
@@ -19,6 +25,11 @@ void ClientThread::run() {
         emit error(socket.error());
         return;
     }
+
+    //connect(&socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(&socket, SIGNAL(disconnected()), &socket, SLOT(deleteLater()));
+
+    qDebug() << socketDescriptor << " se ha conectado...";
 
     /*
     socket.write(dataOut);

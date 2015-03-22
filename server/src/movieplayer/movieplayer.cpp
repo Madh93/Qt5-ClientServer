@@ -339,18 +339,15 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
         return;
     }
 
-    // Aceptar conexiones de los clientes
-    connect(server, SIGNAL(newConnection()), this, SLOT(aceptarConexiones()));
-
-    statusIzda.setText("Dirección IP: " + server->serverAddress().toString());
-    statusDcha.setText("Puerto: " + QString::number(server->serverPort()));
-    qDebug() << server->serverPort();
-    qDebug() << server->serverAddress();
+    // Aceptar conexiones de los clientes   (Automaticamente se llama incomingConnection();
+    //connect(server, SIGNAL(newConnection()), this, SLOT(aceptarConexiones()));
 
 
     // Ajustes
     ui->actionCerrar->setEnabled(true);
     ui->actionCapturarPantalla->setEnabled(true);
+    statusIzda.setText("Dirección IP: " + server->serverAddress().toString());
+    statusDcha.setText("Puerto: " + QString::number(server->serverPort()));
 }
 
 
