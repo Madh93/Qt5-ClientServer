@@ -12,6 +12,7 @@ class ClientThread : public QThread {
     private:
 
         qintptr socketDescriptor;
+        QTcpSocket *socket;
 
     signals:
 

@@ -12,22 +12,24 @@ ClientThread::~ClientThread() {
 void ClientThread::disconnected() {
 
     qDebug() << socketDescriptor << " se ha desconectado...";
-    //socket->deleteLater();
+    socket->deleteLater();
+    //exit(0);
 }
 
 
 void ClientThread::run() {
 
-    QTcpSocket socket;
+    socket = new QTcpSocket;
+    //QTcpSocket socket;
 
     //Inicializarlo con el descriptor del hilo
-    if (!socket.setSocketDescriptor(socketDescriptor)) {
-        emit error(socket.error());
+    if (!socket->setSocketDescriptor(socketDescriptor)) {
+        emit error(socket->error());
         return;
     }
 
-    //connect(&socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(&socket, SIGNAL(disconnected()), &socket, SLOT(deleteLater()));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    //connect(&socket, SIGNAL(disconnected()), &socket, SLOT(deleteLater()));
 
     qDebug() << socketDescriptor << " se ha conectado...";
 
