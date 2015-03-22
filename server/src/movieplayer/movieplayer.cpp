@@ -328,7 +328,7 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
     on_actionCerrar_triggered();
 
     // Iniciar servidor
-    server = new QTcpServer(this);
+    server = new Server(this);
 
     // Mantenerse a la escucha
     if (!server->listen(QHostAddress::AnyIPv4,

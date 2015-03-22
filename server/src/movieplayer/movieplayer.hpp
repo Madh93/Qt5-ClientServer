@@ -22,6 +22,7 @@
 #include "dispositivos.hpp"
 #include "acerca.hpp"
 #include "puerto.hpp"
+#include "server.hpp"
 
 
 namespace Ui {
@@ -39,7 +40,7 @@ class MoviePlayer : public QMainWindow {
         Movie *movie;
         QCamera *camara;
         CaptureBuffer *captureBuffer;
-        QTcpServer *server;
+        Server *server;
         QLabel *label;
         QLabel statusIzda, statusDcha;
         Slider slider;
