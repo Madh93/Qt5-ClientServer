@@ -15,15 +15,19 @@ class ClientThread : public QThread {
 
         QMutex mutex;
         QWaitCondition cond;
+        QString host;
+        quint16 port;
+        bool activo;
 
     signals:
 
-        void error(QTcpSocket::SocketError socketError);
+        void error(QTcpSocket::SocketError socketError, const QString &message);
 
     public:
         ClientThread(QObject *parent = 0);
         ~ClientThread();
 
+        void iniciarConexion(const QString &host, quint16 port);
         void run();
 };
 

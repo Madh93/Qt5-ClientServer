@@ -302,12 +302,9 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
     camara->start();
 */
 
-
-    //QTcpSocket socket(this);
-    //socket.connectToHost(preferencias.value("ip").toString(),
-      //                   preferencias.value("puerto").toInt());
-
     socket = new ClientThread(this);
+    socket->iniciarConexion(preferencias.value("ip").toString(),
+                            preferencias.value("puerto").toInt());
 
 
     // Ajustes

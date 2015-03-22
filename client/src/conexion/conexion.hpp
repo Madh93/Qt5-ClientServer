@@ -19,7 +19,7 @@ class Conexion : public QDialog {
         ~Conexion();
 
         QString getIp();
-        qint16 getPort();
+        quint16 getPort();
 };
 
 #endif // CONEXION_HPP
