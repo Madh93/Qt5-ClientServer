@@ -19,6 +19,7 @@
 #include "slider.hpp"
 #include "dispositivos.hpp"
 #include "acerca.hpp"
+#include "conexion.hpp"
 
 
 namespace Ui {
@@ -89,6 +90,7 @@ class MoviePlayer : public QMainWindow {
         void on_actionActivarCache_toggled(bool cond);
 
         // Preferencias
+        void on_actionConfigurarConexion_triggered();
         void on_actionDispositivos_triggered();
         void on_actionAutoReproducir_toggled(bool cond);
         void on_actionPantallaCompleta_toggled(bool cond);

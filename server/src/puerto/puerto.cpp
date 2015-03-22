@@ -16,8 +16,8 @@ Puerto::~Puerto() {
 }
 
 
-quint16 Puerto::getPuerto() {
+quint16 Puerto::getPort() {
 
-    qint16 puerto = ui->lineEdit->text().toInt();
-    return puerto ? puerto : 0;
+    qint16 port = ui->lineEdit->text().toInt();
+    return port ? port : 0;
 }

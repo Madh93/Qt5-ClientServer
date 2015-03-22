@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Movie Player</string>
+   <string>Movie Player (Cliente)</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
@@ -125,7 +125,9 @@
     <property name="title">
      <string>Preferencias</string>
     </property>
+    <addaction name="actionConfigurarConexion"/>
     <addaction name="actionDispositivos"/>
+    <addaction name="separator"/>
     <addaction name="actionAutoReproducir"/>
     <addaction name="actionPantallaCompleta"/>
    </widget>
@@ -505,6 +507,11 @@
   <action name="actionDispositivos">
    <property name="text">
     <string>Dispositivos</string>
+   </property>
+  </action>
+  <action name="actionConfigurarConexion">
+   <property name="text">
+    <string>Configurar conexión</string>
    </property>
   </action>
  </widget>

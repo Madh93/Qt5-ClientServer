@@ -565,7 +565,7 @@ void MoviePlayer::on_actionEstablecerPuerto_triggered() {
     Puerto w(preferencias.value("puerto").toInt());
 
     if (w.exec() == QDialog::Accepted)
-        preferencias.setValue("puerto", w.getPuerto());
+        preferencias.setValue("puerto", w.getPort());
 }
 
 

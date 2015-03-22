@@ -18,7 +18,7 @@ class Puerto : public QDialog {
         explicit Puerto(quint16 current = 0);
         ~Puerto();
 
-        quint16 getPuerto();
+        quint16 getPort();
 };
 
 #endif // PUERTO_HPP

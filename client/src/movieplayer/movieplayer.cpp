@@ -484,6 +484,18 @@ void MoviePlayer::on_actionActivarCache_toggled(bool cond) {
  PREFERENCIAS
 **************************/
 
+void MoviePlayer::on_actionConfigurarConexion_triggered() {
+
+    Conexion w(preferencias.value("ip").toString(),
+               preferencias.value("puerto").toInt());
+
+    if (w.exec() == QDialog::Accepted) {
+        preferencias.setValue("ip", w.getIp());
+        preferencias.setValue("puerto", w.getPort());
+    }
+}
+
+
 void MoviePlayer::on_actionDispositivos_triggered() {
 
     Dispositivos w(preferencias.value("dispositivo").toString());
