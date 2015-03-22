@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 #include <QTcpServer>
+#include "clientthread.hpp"
 
 class Server : public QTcpServer {
 

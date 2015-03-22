@@ -15,7 +15,8 @@ INCLUDEPATH += $$PWD/acerca \
     $$PWD/movieplayer \
     $$PWD/slider \
     $$PWD/puerto \
-    $$PWD/server
+    $$PWD/server \
+    $$PWD/clientthread
 
 SOURCES += main.cpp\
     acerca/acerca.cpp \
@@ -25,7 +26,8 @@ SOURCES += main.cpp\
     movie/movie.cpp \
     movieplayer/movieplayer.cpp \
     puerto/puerto.cpp \
-    server/server.cpp
+    server/server.cpp \
+    clientthread/clientthread.cpp
 
 HEADERS  += base.hpp \
     acerca/acerca.hpp \
@@ -35,7 +37,8 @@ HEADERS  += base.hpp \
     movie/movie.hpp \
     movieplayer/movieplayer.hpp \
     puerto/puerto.hpp \
-    server/server.hpp
+    server/server.hpp \
+    clientthread/clientthread.hpp
 
 FORMS    += acerca/acerca.ui \
     dispositivos/dispositivos.ui \
