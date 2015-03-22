@@ -24,8 +24,8 @@ QString Conexion::getIp() {
 }
 
 
-qint16 Conexion::getPort() {
+quint16 Conexion::getPort() {
 
-    qint16 port = ui->lineEditPort->text().toInt();
+    quint16 port = ui->lineEditPort->text().toInt();
     return port ? port : 0;
 }
