@@ -217,6 +217,17 @@ void MoviePlayer::updateImagen(QImage imagen){
 }
 
 
+void MoviePlayer::aceptarConexiones() {
+
+
+    while (server->hasPendingConnections()) {
+
+        QTcpSocket *clientConnection = server->nextPendingConnection();
+        //clientConnection->write(data);
+    }
+}
+
+
 /***************************
  ARCHIVO
 **************************/
@@ -321,11 +332,14 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
     qint16 puerto = preferencias.value("puerto").toInt();
 
     // Mantenerse a la escucha
-    if (!server->listen(QHostAddress("192.168.1.33")),puerto) {
+    if (!server->listen(QHostAddress::AnyIPv4),puerto) {
         QMessageBox::critical(this, WINDOW_CRITICAL,
                               tr("No se puede iniciar el servidor: %1.").arg(server->errorString()));
         return;
     }
+
+    // Aceptar conexiones de los clientes
+    connect(server, SIGNAL(newConnection()), this, SLOT(aceptarConexiones()));
 
     statusIzda.setText("Dirección IP: " + server->serverAddress().toString());
     statusDcha.setText("Puerto: " + QString::number(server->serverPort()));
