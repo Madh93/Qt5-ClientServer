@@ -114,15 +114,6 @@ void MoviePlayer::limpiarMovie() {
 
 void MoviePlayer::limpiarCamara() {
 
-    if (socket) {
-        delete socket;
-        socket = NULL;
-    }
-}
-
-
-void MoviePlayer::limpiarSocket() {
-
     if (camara) {
         disconnect(captureBuffer, SIGNAL(imagenChanged(QImage)), this, SLOT(updateImagen(QImage)));
         camara->stop();
@@ -133,6 +124,15 @@ void MoviePlayer::limpiarSocket() {
     if (captureBuffer) {
         delete captureBuffer;
         captureBuffer = NULL;
+    }
+}
+
+
+void MoviePlayer::limpiarSocket() {
+
+    if (socket) {
+        delete socket;
+        socket = NULL;
     }
 }
 
@@ -210,6 +210,10 @@ void MoviePlayer::updateImagen(QImage imagen){
                      QTime().currentTime().toString());
 
     label->setPixmap(pixmap);
+
+
+    //Enviar al servidor
+        emit enviarImagen(QTime().currentTime().toString());
 }
 
 
@@ -266,7 +270,7 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
     // Borrar camara anterior
     on_actionCerrar_triggered();
 
-/*
+
     // Abrir camara por defecto o guardada en preferencias
     QString ruta = preferencias.value("dispositivo").toString();
 
@@ -296,21 +300,23 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
         return;
     }
 
+    // Iniciar conexión con el servidor
+    socket = new ClientThread(this);
+    socket->iniciarConexion(preferencias.value("ip").toString(),
+                            preferencias.value("puerto").toInt());
+
+
     // Iniciar captura
     captureBuffer = new CaptureBuffer;
     camara->setViewfinder(captureBuffer);
     camara->start();
-*/
-
-    socket = new ClientThread(this);
-    socket->iniciarConexion(preferencias.value("ip").toString(),
-                            preferencias.value("puerto").toInt());
 
 
     // Ajustes
     ui->actionCerrar->setEnabled(true);
     ui->actionCapturarPantalla->setEnabled(true);
     connect(captureBuffer, SIGNAL(imagenChanged(QImage)), this, SLOT(updateImagen(QImage)));
+    connect(this, SIGNAL(enviarImagen(QString)), socket, SLOT(enviarImagen(QString)));
 }
 
 

@@ -13,10 +13,12 @@ class ClientThread : public QThread {
 
         qintptr socketDescriptor;
         QTcpSocket *socket;
+        QString imagen;
 
     signals:
 
         void error(QTcpSocket::SocketError socketError);
+        void recibirImagen(QString);
 
     public slots:
 

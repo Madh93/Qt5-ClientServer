@@ -7,7 +7,7 @@ ClientThread::ClientThread(QObject* parent):
 
 ClientThread::~ClientThread() {
 
-    //Cerde turno a otro hilo
+    //Cede turno a otro hilo
     mutex.lock();
         activo = false;
         cond.wakeOne();
@@ -16,11 +16,23 @@ ClientThread::~ClientThread() {
 }
 
 
+void ClientThread::enviarImagen(QString img) {
+
+    QByteArray datos;
+    QDataStream out(&datos, QIODevice::WriteOnly);
+    out << (QString)img;
+
+    socket.write(datos);
+    socket.waitForBytesWritten();
+}
+
+
 void ClientThread::iniciarConexion(const QString &host, quint16 port) {
 
     QMutexLocker locker(&mutex);
     this->host = host;
     this->port = port;
+    //imagen = "o";
 
     // Iniciar comunicación o ceder el turno
     if (!isRunning())
@@ -42,7 +54,7 @@ void ClientThread::run() {
         const int Timeout = 5000;
 
         // Crear socket y conectar con el servidor
-        QTcpSocket socket;
+        //QTcpSocket socket;
         socket.connectToHost(serverHost, serverPort);
 
         // Esperar a conectarse
@@ -50,29 +62,6 @@ void ClientThread::run() {
             emit error(socket.error(), socket.errorString());
             return;
         }
-
-        // Leer
-      /*  while (socket.bytesAvailable() < (int)sizeof(quint16)) {
-            if (!socket.waitForReadyRead(Timeout)) {
-                emit error(socket.error(), socket.errorString());
-                return;
-            }
-        }
-
-        //
-        quint16 blockSize;
-        QDataStream in(&socket);
-        in.setVersion(QDataStream::Qt_4_0);
-        in >> blockSize;
-
-        // Leer
-        while (socket.bytesAvailable() < blockSize) {
-            if (!socket.waitForReadyRead(Timeout)) {
-                emit error(socket.error(), socket.errorString());
-                return;
-            }
-        }
-        */
 
         // Enviar saludo inicial
         QString saludo = "Saludo terrícula!";
@@ -86,16 +75,11 @@ void ClientThread::run() {
 
 
         mutex.lock();
-            //QString fortune;
-            //in >> fortune;
-            //emit newFortune(fortune);
-
             cond.wait(&mutex);
             serverHost = host;
             serverPort = port;
         mutex.unlock();
     }
-
 
 
 }

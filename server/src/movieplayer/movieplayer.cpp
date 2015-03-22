@@ -217,14 +217,9 @@ void MoviePlayer::updateImagen(QImage imagen){
 }
 
 
-void MoviePlayer::aceptarConexiones() {
+void MoviePlayer::recibirImagen(QString imagen) {
 
-
-    while (server->hasPendingConnections()) {
-
-        QTcpSocket *clientConnection = server->nextPendingConnection();
-        //clientConnection->write(data);
-    }
+    label->setText(imagen);
 }
 
 
@@ -342,6 +337,8 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
     // Aceptar conexiones de los clientes   (Automaticamente se llama incomingConnection();
     //connect(server, SIGNAL(newConnection()), this, SLOT(aceptarConexiones()));
 
+    connect(server, SIGNAL(recibirImagen(QString)), this, SLOT(recibirImagen(QString)));
+    label->setText("Servidor iniciado...");
 
     // Ajustes
     ui->actionCerrar->setEnabled(true);

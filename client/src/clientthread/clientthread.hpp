@@ -18,12 +18,18 @@ class ClientThread : public QThread {
         QString host;
         quint16 port;
         bool activo;
+        QTcpSocket socket;
 
     signals:
 
         void error(QTcpSocket::SocketError socketError, const QString &message);
 
+    public slots:
+
+        void enviarImagen(QString);
+
     public:
+
         ClientThread(QObject *parent = 0);
         ~ClientThread();
 

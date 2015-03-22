@@ -53,6 +53,9 @@ class MoviePlayer : public QMainWindow {
         void activarFuncionalidades(bool cond);
         void updateVelocidad();
 
+    signals:
+
+        void enviarImagen(QString);
 
     private slots:
 
