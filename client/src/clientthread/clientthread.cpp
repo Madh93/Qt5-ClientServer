@@ -32,7 +32,6 @@ void ClientThread::iniciarConexion(const QString &host, quint16 port) {
     QMutexLocker locker(&mutex);
     this->host = host;
     this->port = port;
-    //imagen = "o";
 
     // Iniciar comunicación o ceder el turno
     if (!isRunning())
