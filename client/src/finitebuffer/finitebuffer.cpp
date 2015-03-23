@@ -45,8 +45,8 @@ QString FiniteBuffer::extractFrame() {
                             // hasta el unlock() no se ejecutará si el productor ha
                             // bloqueado el cerrojo primero.
 
-    if (count == 0)                     // ¿Cola vacía?...
-    bufferNotEmpty.wait(&mutex);        // Dormir si es así
+    if (count == 0)                         // ¿Cola vacía?...
+        bufferNotEmpty.wait(&mutex);        // Dormir si es así
 
     QString image = buffer[++i % bufferSize];
 
@@ -57,5 +57,4 @@ QString FiniteBuffer::extractFrame() {
     mutex.unlock();        // Liberar el cerrojo
 
     return image;
-
 }

@@ -40,7 +40,7 @@ class MoviePlayer : public QMainWindow {
         QCamera *camara;
         CaptureBuffer *captureBuffer;
         ClientThread *socket;
-        FiniteBuffer *buffer;
+        FiniteBuffer *finiteBuffer;
         QLabel *label;
         QLabel velocidad, tiempo;
         Slider slider;
@@ -53,10 +53,7 @@ class MoviePlayer : public QMainWindow {
         void limpiarSocket();
         void activarFuncionalidades(bool cond);
         void updateVelocidad();
-
-    signals:
-
-        void enviarImagen(QString);
+        void conectarConServidor();
 
     private slots:
 

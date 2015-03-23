@@ -61,7 +61,6 @@ class MoviePlayer : public QMainWindow {
         void updateFrameSlider();
         void showFrame();
         void updateImagen(QImage imagen);
-        void recibirImagen(QString imagen);
 
         // Archivo
         void on_actionAbrir_triggered();

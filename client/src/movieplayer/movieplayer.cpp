@@ -9,7 +9,7 @@ MoviePlayer::MoviePlayer(QWidget *parent) :
     camara(NULL),
     captureBuffer(NULL),
     socket(NULL),
-    buffer(NULL),
+    finiteBuffer(NULL),
     label(NULL) {
 
         ui->setupUi(this);
@@ -62,9 +62,9 @@ MoviePlayer::~MoviePlayer() {
         socket = NULL;
     }
 
-    if (buffer) {
-        delete buffer;
-        buffer = NULL;
+    if (finiteBuffer) {
+        delete finiteBuffer;
+        finiteBuffer = NULL;
     }
 
     speed = 0;
@@ -141,9 +141,9 @@ void MoviePlayer::limpiarSocket() {
         socket = NULL;
     }
 
-    if (buffer) {
-        delete buffer;
-        buffer = NULL;
+    if (finiteBuffer) {
+        delete finiteBuffer;
+        finiteBuffer = NULL;
     }
 }
 
@@ -178,6 +178,18 @@ void MoviePlayer::updateVelocidad() {
 }
 
 
+void MoviePlayer::conectarConServidor() {
+
+    // Iniciar conexión con el servidor
+    finiteBuffer = new FiniteBuffer(20);
+
+    // Iniciar conexión con el servidor
+    socket = new ClientThread(finiteBuffer,this);
+    socket->iniciarConexion(preferencias.value("ip").toString(),
+                            preferencias.value("puerto").toInt());
+}
+
+
 /***************************
  SLOTS
 **************************/
@@ -198,12 +210,6 @@ void MoviePlayer::updateFrameSlider() {
     int total = movie->frameCount() * movie->nextFrameDelay() / 1000;
     int actual = movie->currentFrameNumber() * movie->nextFrameDelay() / 1000;
     tiempo.setText(QString::number(actual) + " / " + QString::number(total)+ "s");
-
-    //Enviar al servidor
-        //emit enviarImagen(QTime().currentTime().toString());
-        qDebug() << Q_FUNC_INFO << QThread::currentThreadId();
-
-        buffer->insertFrame(QTime().currentTime().toString());
 }
 
 
@@ -211,6 +217,9 @@ void MoviePlayer::showFrame() {
 
     pixmap = movie->currentPixmap();
     label->setPixmap(pixmap);
+
+    //Enviar datos al servidor
+    finiteBuffer->insertFrame(QTime().currentTime().toString());
 }
 
 
@@ -228,9 +237,8 @@ void MoviePlayer::updateImagen(QImage imagen){
 
     label->setPixmap(pixmap);
 
-
-    //Enviar al servidor
-        emit enviarImagen(QTime().currentTime().toString());
+    //Enviar datos al servidor
+    finiteBuffer->insertFrame(QTime().currentTime().toString());
 }
 
 
@@ -242,10 +250,8 @@ void MoviePlayer::on_actionAbrir_triggered() {
 
     qDebug() << Q_FUNC_INFO << QThread::currentThreadId();
 
-    //QString ruta = QFileDialog::getOpenFileName(this, "Abrir archivo", QString(),
-      //             "Todos los archivos (*);;Imagen GIF (*.gif);;Imagen MNG (*.mng);;Vídeo MJPEG (*.mjpeg);;");
-
-    QString ruta = "/home/alumno/Escritorio/Qt5-ClientServer/build-Client-Desktop_Qt_5_4_0_GCC_32bit-Debug/src/aaaaaaa.gif";
+    QString ruta = QFileDialog::getOpenFileName(this, "Abrir archivo", QString(),
+                   "Todos los archivos (*);;Imagen GIF (*.gif);;Imagen MNG (*.mng);;Vídeo MJPEG (*.mjpeg);;");
 
     if (!ruta.isEmpty()) {
 
@@ -268,17 +274,11 @@ void MoviePlayer::on_actionAbrir_triggered() {
         }
 
         // Iniciar conexión con el servidor
-        buffer = new FiniteBuffer(20);
-        socket = new ClientThread(buffer,this);
-        socket->iniciarConexion(preferencias.value("ip").toString(),
-                                preferencias.value("puerto").toInt());
-
-
-        // Auto-reproducir
-        if (ui->actionAutoReproducir->isChecked())
-            movie->start();
+        conectarConServidor();
 
         // Ajustes
+        if (ui->actionAutoReproducir->isChecked())
+            movie->start();
         this->setWindowTitle(movie->name() + WINDOW_TITLE_OPENED);
         label->setText("");
         updateVelocidad();
@@ -289,7 +289,6 @@ void MoviePlayer::on_actionAbrir_triggered() {
         connect(&slider, SIGNAL(valueChanged(int)), this, SLOT(setFrameSlider(int)));
         connect(movie, SIGNAL(frameChanged(int)), this, SLOT(updateFrameSlider()));
         connect(movie, SIGNAL(updated(const QRect&)), this, SLOT(showFrame()));
-        //connect(this, SIGNAL(enviarImagen(QString)), socket, SLOT(enviarImagen(QString)));
     }
 }
 
@@ -298,7 +297,6 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
 
     // Borrar camara anterior
     on_actionCerrar_triggered();
-
 
     // Abrir camara por defecto o guardada en preferencias
     QString ruta = preferencias.value("dispositivo").toString();
@@ -330,23 +328,17 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
     }
 
     // Iniciar conexión con el servidor
-    buffer = new FiniteBuffer(20);
-    socket = new ClientThread(buffer,this);
-    socket->iniciarConexion(preferencias.value("ip").toString(),
-                            preferencias.value("puerto").toInt());
-
+    conectarConServidor();
 
     // Iniciar captura
     captureBuffer = new CaptureBuffer;
     camara->setViewfinder(captureBuffer);
     camara->start();
 
-
     // Ajustes
     ui->actionCerrar->setEnabled(true);
     ui->actionCapturarPantalla->setEnabled(true);
     connect(captureBuffer, SIGNAL(imagenChanged(QImage)), this, SLOT(updateImagen(QImage)));
-    connect(this, SIGNAL(enviarImagen(QString)), socket, SLOT(enviarImagen(QString)));
 }
 
 

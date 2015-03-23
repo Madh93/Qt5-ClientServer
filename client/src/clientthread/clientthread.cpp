@@ -17,21 +17,6 @@ ClientThread::~ClientThread() {
 }
 
 
-void ClientThread::enviarImagen(QString img) {
-/*
-    qDebug() << Q_FUNC_INFO << QThread::currentThreadId() << " aaaaaaaaaaaaaaaaa";
-
-    QByteArray datos;
-    QDataStream out(&datos, QIODevice::WriteOnly);
-    out << (QString)img;
-
-    socket.write(datos);
-    socket.waitForBytesWritten();
-
-*/
-}
-
-
 void ClientThread::iniciarConexion(const QString &host, quint16 port) {
 
     QMutexLocker locker(&mutex);

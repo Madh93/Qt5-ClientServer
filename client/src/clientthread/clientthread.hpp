@@ -27,10 +27,6 @@ class ClientThread : public QThread {
 
         void error(QTcpSocket::SocketError socketError, const QString &message);
 
-    public slots:
-
-        void enviarImagen(QString);
-
     public:
 
         ClientThread(FiniteBuffer *finitebuffer, QObject *parent = 0);

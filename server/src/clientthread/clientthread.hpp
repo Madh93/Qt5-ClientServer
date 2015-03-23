@@ -18,7 +18,6 @@ class ClientThread : public QThread {
     signals:
 
         void error(QTcpSocket::SocketError socketError);
-        void recibirImagen(QString);
 
     public slots:
 

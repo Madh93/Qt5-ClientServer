@@ -217,12 +217,6 @@ void MoviePlayer::updateImagen(QImage imagen){
 }
 
 
-void MoviePlayer::recibirImagen(QString imagen) {
-
-    label->setText(imagen);
-}
-
-
 /***************************
  ARCHIVO
 **************************/
@@ -334,10 +328,6 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
         return;
     }
 
-    // Aceptar conexiones de los clientes   (Automaticamente se llama incomingConnection();
-    //connect(server, SIGNAL(newConnection()), this, SLOT(aceptarConexiones()));
-
-    connect(server, SIGNAL(recibirImagen(QString)), this, SLOT(recibirImagen(QString)));
     label->setText("Servidor iniciado...");
 
     // Ajustes

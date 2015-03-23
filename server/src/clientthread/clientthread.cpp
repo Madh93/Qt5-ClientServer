@@ -40,8 +40,6 @@ void ClientThread::run() {
     in >> imagen;
 
     qDebug() << recibido;
-    emit recibirImagen(imagen);
-
 
     /*
     socket.write(dataOut);

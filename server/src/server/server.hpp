@@ -8,14 +8,6 @@ class Server : public QTcpServer {
 
     Q_OBJECT
 
-    signals:
-
-        void recibirImagen(QString);
-
-    public slots:
-
-        void transmitirImagen(QString);
-
     public:
 
         explicit Server(QObject *parent = 0);
