@@ -80,14 +80,15 @@ void ClientThread::run() {
         out << (QString)saludo;
 
         socket.write(datos);
-        socket.waitForBytesWritten();
+        //socket.waitForBytesWritten(Timeout);
 
 
-        mutex.lock();
-            //cond.wait(&mutex);
+       /* mutex.lock();
+            cond.wait(&mutex);
             serverHost = host;
             serverPort = port;
         mutex.unlock();
+        */
     }
 
 
