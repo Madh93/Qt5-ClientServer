@@ -6,6 +6,7 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QDebug>
+#include <QTime>
 
 #include "finitebuffer.hpp"
 
@@ -21,7 +22,6 @@ class ClientThread : public QThread {
         QString host;
         quint16 port;
         bool activo;
-        QTcpSocket socket;
 
     signals:
 

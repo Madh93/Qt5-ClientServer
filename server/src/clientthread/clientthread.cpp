@@ -2,53 +2,55 @@
 
 ClientThread::ClientThread(qintptr socket_Descriptor, QObject *parent):
     QThread(parent),
-    socketDescriptor(socket_Descriptor) { }
+    socketDescriptor(socket_Descriptor),
+    socket(NULL),
+    activo(true) { }
 
 
 ClientThread::~ClientThread() {
 
+    mutex.lock();
+        activo = false;
+        delete socket;
+    mutex.unlock();
+    wait();
 }
 
 void ClientThread::disconnected() {
 
     qDebug() << socketDescriptor << " se ha desconectado...";
-    //socket->deleteLater();
+    socket->deleteLater();
     //exit(0);
 }
 
 
 void ClientThread::run() {
 
-    //socket = new QTcpSocket;
-    QTcpSocket socket;
+    socket = new QTcpSocket;
 
     //Inicializarlo con el descriptor del hilo
-    if (!socket.setSocketDescriptor(socketDescriptor)) {
-        emit error(socket.error());
+    if (!socket->setSocketDescriptor(socketDescriptor)) {
+        emit error(socket->error());
         return;
     }
 
-    //connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(&socket, SIGNAL(disconnected()), &socket, SLOT(deleteLater()));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 
     qDebug() << socketDescriptor << " se ha conectado...";
 
-    QString recibido;
-    socket.waitForReadyRead(-1);
-    QByteArray datos = socket.readAll();
-    QDataStream in(datos);
-    in >> imagen;
+    while(activo){
 
-    qDebug() << recibido;
+        imagen = "";
+        socket->waitForReadyRead(-1);
+        QByteArray datos = socket->readAll();
+        QDataStream in(datos);
+        in >> imagen;
 
-    /*
-    socket.write(dataOut);
-    socket.waitForBytesWritten();
-    socket.waitForReadyRead(-1);
-    QByteArray dataInt = socket.readAll();
-    //...procesar datos recibidos en dataINT
+        //if (imagen != "")
+          //  qDebug() << imagen;
+    }
 
-    socket.disconnectFromHost();
-    socket.waitForDisconnected();
-    */
+    qDebug() << "terminando hilo...";
+    //socket->disconnectFromHost();
+    //socke->waitForDisconnected();
 }

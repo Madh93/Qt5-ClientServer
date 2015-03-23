@@ -11,7 +11,7 @@ ClientThread::~ClientThread() {
     //Cede turno a otro hilo
     mutex.lock();
         activo = false;
-        cond.wakeOne();
+        //cond.wakeOne();
     mutex.unlock();
     wait();
 }
@@ -23,7 +23,7 @@ void ClientThread::iniciarConexion(const QString &host, quint16 port) {
     this->host = host;
     this->port = port;
 
-    // Iniciar comunicación o ceder el turno
+    // Iniciar comunicación
     if (!isRunning())
         start();
     else
@@ -52,29 +52,27 @@ void ClientThread::run() {
 
     while (activo) {
 
-        //qDebug() << Q_FUNC_INFO << QThread::currentThreadId();
+        // Extraer imagen
         //QString image = buffer->extractFrame();
-
 
         // Enviar saludo inicial
         QString saludo = "Saludo terrícula!";
-        qDebug() << saludo;
+        //QString saludo = QTime().currentTime().toString();
+        //qDebug() << saludo;
 
         QByteArray datos;
         QDataStream out(&datos, QIODevice::WriteOnly);
         out << (QString)saludo;
 
         socket.write(datos);
-        //socket.waitForBytesWritten(Timeout);
+        socket.waitForBytesWritten(Timeout);
 
-
-       /* mutex.lock();
-            cond.wait(&mutex);
-            serverHost = host;
-            serverPort = port;
-        mutex.unlock();
-        */
     }
+        //mutex.lock();
+        //    cond.wait(&mutex);
+            //serverHost = host;
+            //serverPort = port;
+//        mutex.unlock();
 
 
 }

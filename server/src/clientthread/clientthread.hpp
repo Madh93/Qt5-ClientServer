@@ -2,6 +2,7 @@
 #define CLIENTTHREAD_HPP
 
 #include <QThread>
+#include <QMutex>
 #include <QTcpSocket>
 #include <QDebug>
 
@@ -14,6 +15,8 @@ class ClientThread : public QThread {
         qintptr socketDescriptor;
         QTcpSocket *socket;
         QString imagen;
+        QMutex mutex;
+        bool activo;
 
     signals:
 
