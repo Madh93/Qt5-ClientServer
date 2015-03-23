@@ -9,6 +9,7 @@ MoviePlayer::MoviePlayer(QWidget *parent) :
     camara(NULL),
     captureBuffer(NULL),
     socket(NULL),
+    buffer(NULL),
     label(NULL) {
 
         ui->setupUi(this);
@@ -59,6 +60,11 @@ MoviePlayer::~MoviePlayer() {
     if (socket) {
         delete socket;
         socket = NULL;
+    }
+
+    if (buffer) {
+        delete buffer;
+        buffer = NULL;
     }
 
     speed = 0;
@@ -134,6 +140,11 @@ void MoviePlayer::limpiarSocket() {
         delete socket;
         socket = NULL;
     }
+
+    if (buffer) {
+        delete buffer;
+        buffer = NULL;
+    }
 }
 
 
@@ -187,6 +198,12 @@ void MoviePlayer::updateFrameSlider() {
     int total = movie->frameCount() * movie->nextFrameDelay() / 1000;
     int actual = movie->currentFrameNumber() * movie->nextFrameDelay() / 1000;
     tiempo.setText(QString::number(actual) + " / " + QString::number(total)+ "s");
+
+    //Enviar al servidor
+        //emit enviarImagen(QTime().currentTime().toString());
+        qDebug() << Q_FUNC_INFO << QThread::currentThreadId();
+
+        buffer->insertFrame(QTime().currentTime().toString());
 }
 
 
@@ -223,8 +240,12 @@ void MoviePlayer::updateImagen(QImage imagen){
 
 void MoviePlayer::on_actionAbrir_triggered() {
 
-    QString ruta = QFileDialog::getOpenFileName(this, "Abrir archivo", QString(),
-                   "Todos los archivos (*);;Imagen GIF (*.gif);;Imagen MNG (*.mng);;Vídeo MJPEG (*.mjpeg);;");
+    qDebug() << Q_FUNC_INFO << QThread::currentThreadId();
+
+    //QString ruta = QFileDialog::getOpenFileName(this, "Abrir archivo", QString(),
+      //             "Todos los archivos (*);;Imagen GIF (*.gif);;Imagen MNG (*.mng);;Vídeo MJPEG (*.mjpeg);;");
+
+    QString ruta = "/home/alumno/Escritorio/Qt5-ClientServer/build-Client-Desktop_Qt_5_4_0_GCC_32bit-Debug/src/aaaaaaa.gif";
 
     if (!ruta.isEmpty()) {
 
@@ -246,6 +267,13 @@ void MoviePlayer::on_actionAbrir_triggered() {
             return;
         }
 
+        // Iniciar conexión con el servidor
+        buffer = new FiniteBuffer(20);
+        socket = new ClientThread(buffer,this);
+        socket->iniciarConexion(preferencias.value("ip").toString(),
+                                preferencias.value("puerto").toInt());
+
+
         // Auto-reproducir
         if (ui->actionAutoReproducir->isChecked())
             movie->start();
@@ -261,6 +289,7 @@ void MoviePlayer::on_actionAbrir_triggered() {
         connect(&slider, SIGNAL(valueChanged(int)), this, SLOT(setFrameSlider(int)));
         connect(movie, SIGNAL(frameChanged(int)), this, SLOT(updateFrameSlider()));
         connect(movie, SIGNAL(updated(const QRect&)), this, SLOT(showFrame()));
+        //connect(this, SIGNAL(enviarImagen(QString)), socket, SLOT(enviarImagen(QString)));
     }
 }
 
@@ -301,7 +330,8 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
     }
 
     // Iniciar conexión con el servidor
-    socket = new ClientThread(this);
+    buffer = new FiniteBuffer(20);
+    socket = new ClientThread(buffer,this);
     socket->iniciarConexion(preferencias.value("ip").toString(),
                             preferencias.value("puerto").toInt());
 

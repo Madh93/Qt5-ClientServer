@@ -7,12 +7,15 @@
 #include <QWaitCondition>
 #include <QDebug>
 
+#include "finitebuffer.hpp"
+
 class ClientThread : public QThread {
 
     Q_OBJECT
 
     private:
 
+        FiniteBuffer *buffer;
         QMutex mutex;
         QWaitCondition cond;
         QString host;
@@ -30,7 +33,7 @@ class ClientThread : public QThread {
 
     public:
 
-        ClientThread(QObject *parent = 0);
+        ClientThread(FiniteBuffer *finitebuffer, QObject *parent = 0);
         ~ClientThread();
 
         void iniciarConexion(const QString &host, quint16 port);
