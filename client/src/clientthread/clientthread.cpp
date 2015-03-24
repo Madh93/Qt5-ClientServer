@@ -11,9 +11,9 @@ ClientThread::~ClientThread() {
     //Cede turno a otro hilo
     mutex.lock();
         activo = false;
-        //cond.wakeOne();
+        cond.wakeOne();
     mutex.unlock();
-    wait();
+    //wait();
 }
 
 
@@ -50,29 +50,27 @@ void ClientThread::run() {
         return;
     }
 
-    while (activo) {
+    //while (activo) {
+    while (!this->isInterruptionRequested()) {
 
         // Extraer imagen
-        //QString image = buffer->extractFrame();
+        QString imagen = buffer->extractFrame();
 
         // Enviar saludo inicial
-        QString saludo = "Saludo terrícula!";
+        //QString saludo = "Saludo terrícula!";
         //QString saludo = QTime().currentTime().toString();
         //qDebug() << saludo;
 
         QByteArray datos;
         QDataStream out(&datos, QIODevice::WriteOnly);
-        out << (QString)saludo;
+        out << (QString)imagen;
 
         socket.write(datos);
         socket.waitForBytesWritten(Timeout);
-
     }
-        //mutex.lock();
-        //    cond.wait(&mutex);
-            //serverHost = host;
-            //serverPort = port;
-//        mutex.unlock();
 
-
+        qDebug() << "saliendo de hilo...";
+    mutex.lock();
+        cond.wait(&mutex);
+    mutex.unlock();
 }

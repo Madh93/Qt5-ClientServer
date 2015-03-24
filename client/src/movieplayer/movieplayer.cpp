@@ -136,6 +136,11 @@ void MoviePlayer::limpiarCamara() {
 
 void MoviePlayer::limpiarSocket() {
 
+    if (socket != 0 && socket->isRunning() ) {
+        socket->requestInterruption();
+        //socket->wait();
+    }
+
     if (socket) {
         delete socket;
         socket = NULL;
@@ -185,6 +190,7 @@ void MoviePlayer::conectarConServidor() {
 
     // Iniciar conexión con el servidor
     socket = new ClientThread(finiteBuffer,this);
+    connect(socket, SIGNAL(finished()), socket, SLOT(deleteLater()));
     socket->iniciarConexion(preferencias.value("ip").toString(),
                             preferencias.value("puerto").toInt());
 }
@@ -238,7 +244,7 @@ void MoviePlayer::updateImagen(QImage imagen){
     label->setPixmap(pixmap);
 
     //Enviar datos al servidor
-    finiteBuffer->insertFrame(QTime().currentTime().toString());
+    //finiteBuffer->insertFrame(QTime().currentTime().toString());
 }
 
 
@@ -297,7 +303,7 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
 
     // Borrar camara anterior
     on_actionCerrar_triggered();
-/*
+
     // Abrir camara por defecto o guardada en preferencias
     QString ruta = preferencias.value("dispositivo").toString();
 
@@ -326,19 +332,19 @@ void MoviePlayer::on_actionCapturarVideo_triggered() {
         QMessageBox::critical(this, WINDOW_CRITICAL, "No existe ningún dispositivo o está ocupado.");
         return;
     }
-*/
+
     // Iniciar conexión con el servidor
     conectarConServidor();
 
     // Iniciar captura
-  //  captureBuffer = new CaptureBuffer;
-//    camara->setViewfinder(captureBuffer);
-//    camara->start();
+    captureBuffer = new CaptureBuffer;
+    camara->setViewfinder(captureBuffer);
+    camara->start();
 
     // Ajustes
     ui->actionCerrar->setEnabled(true);
     ui->actionCapturarPantalla->setEnabled(true);
-//    connect(captureBuffer, SIGNAL(imagenChanged(QImage)), this, SLOT(updateImagen(QImage)));
+    connect(captureBuffer, SIGNAL(imagenChanged(QImage)), this, SLOT(updateImagen(QImage)));
 }
 
 

@@ -46,8 +46,8 @@ void ClientThread::run() {
         QDataStream in(datos);
         in >> imagen;
 
-        //if (imagen != "")
-          //  qDebug() << imagen;
+        if (imagen != "")
+            qDebug() << imagen;
     }
 
     qDebug() << "terminando hilo...";
