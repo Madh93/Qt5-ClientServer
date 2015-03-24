@@ -21,7 +21,6 @@
 #include "dispositivos.hpp"
 #include "acerca.hpp"
 #include "conexion.hpp"
-#include "clientthread.hpp"
 
 
 namespace Ui {
@@ -36,11 +35,11 @@ class MoviePlayer : public QMainWindow {
 
         Ui::MoviePlayer *ui;
         int speed;
+        bool conectado;
         Movie *movie;
         QCamera *camara;
         CaptureBuffer *captureBuffer;
-        ClientThread *socket;
-        FiniteBuffer *finiteBuffer;
+        QTcpSocket *socket;
         QLabel *label;
         QLabel velocidad, tiempo;
         Slider slider;
@@ -61,6 +60,7 @@ class MoviePlayer : public QMainWindow {
         void updateFrameSlider();
         void showFrame();
         void updateImagen(QImage imagen);
+        void connected();
 
         // Archivo
         void on_actionAbrir_triggered();

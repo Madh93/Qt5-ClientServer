@@ -13,6 +13,7 @@
 #include <QPainter>
 #include <QTime>
 #include <QTcpServer>
+#include <QTcpSocket>
 #include <QNetworkSession>
 
 #include "base.hpp"
@@ -22,7 +23,6 @@
 #include "dispositivos.hpp"
 #include "acerca.hpp"
 #include "puerto.hpp"
-#include "server.hpp"
 
 
 namespace Ui {
@@ -40,8 +40,8 @@ class MoviePlayer : public QMainWindow {
         Movie *movie;
         QCamera *camara;
         CaptureBuffer *captureBuffer;
-        Server *server;
-        FiniteBuffer *finiteBuffer;
+        QTcpServer *server;
+        QTcpSocket *cliente;
         QLabel *label;
         QLabel statusIzda, statusDcha;
         Slider slider;
@@ -62,6 +62,8 @@ class MoviePlayer : public QMainWindow {
         void updateFrameSlider();
         void showFrame();
         void updateImagen(QImage imagen);
+        void aceptarConexiones();
+        void recibirDatos();
 
         // Archivo
         void on_actionAbrir_triggered();

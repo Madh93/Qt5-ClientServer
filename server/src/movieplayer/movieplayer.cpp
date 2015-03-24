@@ -9,7 +9,7 @@ MoviePlayer::MoviePlayer(QWidget *parent) :
     camara(NULL),
     captureBuffer(NULL),
     server(NULL),
-    finiteBuffer(NULL),
+    cliente(NULL),
     label(NULL) {
 
         ui->setupUi(this);
@@ -63,9 +63,9 @@ MoviePlayer::~MoviePlayer() {
         server = NULL;
     }
 
-    if (finiteBuffer) {
-        delete finiteBuffer;
-        finiteBuffer = NULL;
+    if (cliente) {
+        delete cliente;
+        cliente = NULL;
     }
 
     speed = 0;
@@ -142,9 +142,9 @@ void MoviePlayer::limpiarServer() {
         server = NULL;
     }
 
-    if (finiteBuffer) {
-        delete finiteBuffer;
-        finiteBuffer = NULL;
+    if (cliente) {
+        delete cliente;
+        cliente = NULL;
     }
 
     statusIzda.setText("");
@@ -225,6 +225,32 @@ void MoviePlayer::updateImagen(QImage imagen){
                      QTime().currentTime().toString());
 
     label->setPixmap(pixmap);
+}
+
+
+void MoviePlayer::aceptarConexiones() {
+
+    while (server->hasPendingConnections()) {
+
+          cliente = server->nextPendingConnection();
+          connect(cliente, SIGNAL(disconnected()), cliente, SLOT(deleteLater()));
+          connect(cliente, SIGNAL(readyRead()), this, SLOT(recibirDatos()));
+    }
+}
+
+
+void MoviePlayer::recibirDatos() {
+
+
+    //Leer del socket
+
+    QString saludo = "";
+    cliente->waitForReadyRead(-1);
+    QByteArray datos = cliente->readAll();
+    QDataStream in(datos);
+    in >> saludo;
+
+    label->setText(saludo);
 }
 
 
@@ -328,8 +354,7 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
     on_actionCerrar_triggered();
 
     // Iniciar servidor
-    server = new Server(this);
-    finiteBuffer = server->getBuffer();
+    server = new QTcpServer(this);
 
     // Mantenerse a la escucha
     if (!server->listen(QHostAddress::AnyIPv4,
@@ -340,11 +365,13 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
         return;
     }
 
-    label->setText("Servidor iniciado...");
+    connect(server, SIGNAL(newConnection()), this, SLOT(aceptarConexiones()));
+
 
     // Ajustes
     ui->actionCerrar->setEnabled(true);
     ui->actionCapturarPantalla->setEnabled(true);
+    label->setText("Servidor iniciado...");
     statusIzda.setText("Dirección IP: " + server->serverAddress().toString());
     statusDcha.setText("Puerto: " + QString::number(server->serverPort()));
 }
