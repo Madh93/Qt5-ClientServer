@@ -67,6 +67,18 @@ MoviePlayer::~MoviePlayer() {
 }
 
 
+
+QDataStream &operator << (QDataStream &out, const Captura &captura) {
+
+    out << (QString)captura.cliente
+        << (uint)captura.timestamp
+        << (QByteArray)captura.imagen
+        << (int)captura.size;
+
+    return out;
+}
+
+
 /***************************
  MÉTODOS PRIVADOS
 **************************/
@@ -178,8 +190,8 @@ void MoviePlayer::conectarConServidor() {
     socket->connectToHost(preferencias.value("ip").toString(),
                           preferencias.value("puerto").toInt());
 
-     if(!socket->waitForConnected(5000))
-         qDebug() << "Error: " << socket->errorString();
+     //if(!socket->waitForConnected(5000))
+       //  qDebug() << "Error: " << socket->errorString();
 
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
 }
@@ -229,15 +241,21 @@ void MoviePlayer::updateImagen(QImage imagen){
 
     label->setPixmap(pixmap);
 
-
     if (conectado) {
 
-        // Enviar datos
-        QString saludo = QTime().currentTime().toString();
+        QBuffer buffer;
+        pixmap.toImage().save(&buffer, "jpeg");
+
+        //Crear paquete de protocolo
+        Captura captura;
+        captura.cliente = preferencias.value("usuario").toString();
+        captura.timestamp = QDateTime::currentDateTime().toTime_t();
+        captura.imagen = buffer.buffer();
+        captura.size = buffer.buffer().size();
 
         QByteArray datos;
-        QDataStream out(&datos, QIODevice::WriteOnly);
-        out << (QString)saludo;
+        QDataStream out (&datos, QIODevice::WriteOnly);
+        out << captura;
 
         socket->write(datos);
         socket->waitForBytesWritten();

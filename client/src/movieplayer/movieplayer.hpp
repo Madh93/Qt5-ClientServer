@@ -13,6 +13,8 @@
 #include <QPainter>
 #include <QTime>
 #include <QTcpSocket>
+#include <QBuffer>
+#include <QDataStream>
 
 #include "base.hpp"
 #include "movie.hpp"
@@ -21,6 +23,14 @@
 #include "dispositivos.hpp"
 #include "acerca.hpp"
 #include "conexion.hpp"
+
+
+struct Captura {
+    QString cliente;
+    uint timestamp;
+    QByteArray imagen;
+    int size;
+};
 
 
 namespace Ui {

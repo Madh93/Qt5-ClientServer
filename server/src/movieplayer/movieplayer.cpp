@@ -72,6 +72,18 @@ MoviePlayer::~MoviePlayer() {
 }
 
 
+QDataStream &operator >> (QDataStream &in, Captura &captura) {
+
+    in >> captura.cliente
+       >> captura.timestamp
+       >> captura.imagen
+       >> captura.size;
+
+    return in;
+}
+
+
+
 /***************************
  MÉTODOS PRIVADOS
 **************************/
@@ -241,18 +253,31 @@ void MoviePlayer::aceptarConexiones() {
 
 void MoviePlayer::recibirDatos() {
 
-
-    //Leer del socket
-
-    QString saludo = "";
     cliente->waitForReadyRead(-1);
+
+    // Recibir paquete de procolo
+    Captura captura;
     QByteArray datos = cliente->readAll();
     QDataStream in(datos);
-    in >> saludo;
+    in >> captura;
 
-    socket->waitForBytesWritten(3000);
+    cliente->waitForBytesWritten(3000);
 
-    label->setText(saludo);
+    // Recuperar imagen
+    QByteArray buffer(captura.imagen,captura.size);
+    QImage img;
+    img.loadFromData(buffer,"jpeg");
+    pixmap = QPixmap(QPixmap::fromImage(img));
+
+    // Añadir información
+    QPainter painter(&pixmap);
+    painter.setPen(Qt::red);
+    painter.setFont(QFont("",14));
+    painter.drawText(20,30,tr("Cliente: %1").arg(captura.cliente));
+    painter.drawText(20,50,tr("Timestamp: %1").arg(captura.timestamp));
+
+    // Mostrar imagen
+    label->setPixmap(pixmap);
 }
 
 
