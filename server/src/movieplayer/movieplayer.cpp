@@ -83,7 +83,6 @@ QDataStream &operator >> (QDataStream &in, Captura &captura) {
 }
 
 
-
 /***************************
  MÉTODOS PRIVADOS
 **************************/
@@ -150,11 +149,16 @@ void MoviePlayer::limpiarCamara() {
 void MoviePlayer::limpiarServer() {
 
     if (server) {
+        server->close();
+        disconnect(server, SIGNAL(newConnection()), this, SLOT(aceptarConexiones()));
         delete server;
         server = NULL;
     }
 
     if (cliente) {
+        //cliente->disconnectFromHost();
+        disconnect(cliente, SIGNAL(disconnected()), cliente, SLOT(deleteLater()));
+        disconnect(cliente, SIGNAL(readyRead()), this, SLOT(recibirDatos()));
         delete cliente;
         cliente = NULL;
     }
@@ -260,8 +264,6 @@ void MoviePlayer::recibirDatos() {
     QByteArray datos = cliente->readAll();
     QDataStream in(datos);
     in >> captura;
-
-    cliente->waitForBytesWritten(3000);
 
     // Recuperar imagen
     QByteArray buffer(captura.imagen,captura.size);
@@ -393,7 +395,6 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
     }
 
     connect(server, SIGNAL(newConnection()), this, SLOT(aceptarConexiones()));
-
 
     // Ajustes
     ui->actionCerrar->setEnabled(true);

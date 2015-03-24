@@ -13,6 +13,7 @@
 #include <QPainter>
 #include <QTime>
 #include <QTcpSocket>
+#include <QAbstractSocket>
 #include <QBuffer>
 #include <QDataStream>
 
@@ -71,6 +72,8 @@ class MoviePlayer : public QMainWindow {
         void showFrame();
         void updateImagen(QImage imagen);
         void connected();
+        void disconnected();
+        void socketError(QAbstractSocket::SocketError error);
 
         // Archivo
         void on_actionAbrir_triggered();

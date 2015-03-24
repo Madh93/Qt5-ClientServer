@@ -58,6 +58,7 @@ MoviePlayer::~MoviePlayer() {
     }
 
     if (socket) {
+        socket->disconnectFromHost();
         delete socket;
         socket = NULL;
     }
@@ -146,6 +147,9 @@ void MoviePlayer::limpiarSocket() {
 
     if (socket) {
         disconnect(socket, SIGNAL(connected()), this, SLOT(connected()));
+        disconnect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+        disconnect(socket, SIGNAL(error(QAbstractSocket::SocketError)),
+                this, SLOT(socketError(QAbstractSocket::SocketError)));
         conectado = false;
         delete socket;
         socket = NULL;
@@ -190,10 +194,10 @@ void MoviePlayer::conectarConServidor() {
     socket->connectToHost(preferencias.value("ip").toString(),
                           preferencias.value("puerto").toInt());
 
-     //if(!socket->waitForConnected(5000))
-       //  qDebug() << "Error: " << socket->errorString();
-
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)),
+            this, SLOT(socketError(QAbstractSocket::SocketError)));
 }
 
 
@@ -272,6 +276,28 @@ void MoviePlayer::connected() {
             movie->start();
 
     conectado = true;
+}
+
+void MoviePlayer::disconnected() {
+
+    conectado = false;
+}
+
+void MoviePlayer::socketError(QAbstractSocket::SocketError error) {
+
+    switch (error) {
+
+        case QAbstractSocket::ConnectionRefusedError :
+            QMessageBox::warning(this, WINDOW_WARNING,
+                                 "No se ha encontrado el servidor.\nComprueba la dirección y el puerto.");
+            on_actionCerrar_triggered();
+            break;
+
+        default : break;
+
+    }
+
+    on_actionCerrar_triggered();
 }
 
 
