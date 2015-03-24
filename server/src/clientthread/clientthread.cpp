@@ -2,6 +2,7 @@
 
 ClientThread::ClientThread(qintptr socket_Descriptor, QObject *parent):
     QThread(parent),
+    buffer(new FiniteBuffer(20)),
     socketDescriptor(socket_Descriptor),
     socket(NULL),
     activo(true) { }
@@ -38,16 +39,20 @@ void ClientThread::run() {
 
     qDebug() << socketDescriptor << " se ha conectado...";
 
+    QString img;
+
     while(activo){
 
-        imagen = "";
+        img = "";
         socket->waitForReadyRead(-1);
         QByteArray datos = socket->readAll();
         QDataStream in(datos);
-        in >> imagen;
+        in >> img;
 
-        if (imagen != "")
-            qDebug() << imagen;
+        //if (imagen != "")
+            //qDebug() << imagen;
+
+        emit enviarImagen(img);
     }
 
     qDebug() << "terminando hilo...";

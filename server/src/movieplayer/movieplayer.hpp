@@ -41,6 +41,7 @@ class MoviePlayer : public QMainWindow {
         QCamera *camara;
         CaptureBuffer *captureBuffer;
         Server *server;
+        FiniteBuffer *finiteBuffer;
         QLabel *label;
         QLabel statusIzda, statusDcha;
         Slider slider;

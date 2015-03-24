@@ -6,12 +6,15 @@
 #include <QTcpSocket>
 #include <QDebug>
 
+#include "finitebuffer.hpp"
+
 class ClientThread : public QThread {
 
     Q_OBJECT
 
     private:
 
+        FiniteBuffer *buffer;
         qintptr socketDescriptor;
         QTcpSocket *socket;
         QString imagen;
@@ -21,6 +24,7 @@ class ClientThread : public QThread {
     signals:
 
         void error(QTcpSocket::SocketError socketError);
+        void enviarImagen(QString);
 
     public slots:
 

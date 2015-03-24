@@ -9,6 +9,7 @@ MoviePlayer::MoviePlayer(QWidget *parent) :
     camara(NULL),
     captureBuffer(NULL),
     server(NULL),
+    finiteBuffer(NULL),
     label(NULL) {
 
         ui->setupUi(this);
@@ -60,6 +61,11 @@ MoviePlayer::~MoviePlayer() {
     if (server) {
         delete server;
         server = NULL;
+    }
+
+    if (finiteBuffer) {
+        delete finiteBuffer;
+        finiteBuffer = NULL;
     }
 
     speed = 0;
@@ -134,6 +140,11 @@ void MoviePlayer::limpiarServer() {
     if (server) {
         delete server;
         server = NULL;
+    }
+
+    if (finiteBuffer) {
+        delete finiteBuffer;
+        finiteBuffer = NULL;
     }
 
     statusIzda.setText("");
@@ -318,6 +329,7 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
 
     // Iniciar servidor
     server = new Server(this);
+    finiteBuffer = server->getBuffer();
 
     // Mantenerse a la escucha
     if (!server->listen(QHostAddress::AnyIPv4,
