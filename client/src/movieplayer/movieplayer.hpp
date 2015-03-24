@@ -64,6 +64,7 @@ class MoviePlayer : public QMainWindow {
         void activarFuncionalidades(bool cond);
         void updateVelocidad();
         void conectarConServidor();
+        void enviarImagen();
 
     private slots:
 

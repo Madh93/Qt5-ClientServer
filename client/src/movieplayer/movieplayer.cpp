@@ -1,6 +1,18 @@
 #include "movieplayer.hpp"
 #include "ui_movieplayer.h"
 
+
+QDataStream &operator << (QDataStream &out, const Captura &captura) {
+
+    out << (QString)captura.cliente
+        << (uint)captura.timestamp
+        << (QByteArray)captura.imagen
+        << (int)captura.size;
+
+    return out;
+}
+
+
 MoviePlayer::MoviePlayer(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MoviePlayer),
@@ -65,18 +77,6 @@ MoviePlayer::~MoviePlayer() {
 
     speed = 0;
     conectado = false;
-}
-
-
-
-QDataStream &operator << (QDataStream &out, const Captura &captura) {
-
-    out << (QString)captura.cliente
-        << (uint)captura.timestamp
-        << (QByteArray)captura.imagen
-        << (int)captura.size;
-
-    return out;
 }
 
 
@@ -201,6 +201,30 @@ void MoviePlayer::conectarConServidor() {
 }
 
 
+void MoviePlayer::enviarImagen() {
+
+    if (conectado) {
+
+        QBuffer buffer;
+        pixmap.toImage().save(&buffer, "jpeg");
+
+        //Crear paquete de protocolo
+        Captura captura;
+        captura.cliente = preferencias.value("usuario").toString();
+        captura.timestamp = QDateTime::currentDateTime().toTime_t();
+        captura.imagen = buffer.buffer();
+        captura.size = buffer.buffer().size();
+
+        QByteArray datos;
+        QDataStream out (&datos, QIODevice::WriteOnly);
+        out << captura;
+
+        socket->write(datos);
+        socket->waitForBytesWritten();
+    }
+}
+
+
 /***************************
  SLOTS
 **************************/
@@ -228,6 +252,7 @@ void MoviePlayer::showFrame() {
 
     pixmap = movie->currentPixmap();
     label->setPixmap(pixmap);
+    enviarImagen();
 }
 
 
@@ -244,26 +269,7 @@ void MoviePlayer::updateImagen(QImage imagen){
                      QTime().currentTime().toString());
 
     label->setPixmap(pixmap);
-
-    if (conectado) {
-
-        QBuffer buffer;
-        pixmap.toImage().save(&buffer, "jpeg");
-
-        //Crear paquete de protocolo
-        Captura captura;
-        captura.cliente = preferencias.value("usuario").toString();
-        captura.timestamp = QDateTime::currentDateTime().toTime_t();
-        captura.imagen = buffer.buffer();
-        captura.size = buffer.buffer().size();
-
-        QByteArray datos;
-        QDataStream out (&datos, QIODevice::WriteOnly);
-        out << captura;
-
-        socket->write(datos);
-        socket->waitForBytesWritten();
-    }
+    enviarImagen();
 }
 
 
@@ -278,10 +284,12 @@ void MoviePlayer::connected() {
     conectado = true;
 }
 
+
 void MoviePlayer::disconnected() {
 
     conectado = false;
 }
+
 
 void MoviePlayer::socketError(QAbstractSocket::SocketError error) {
 
@@ -293,11 +301,22 @@ void MoviePlayer::socketError(QAbstractSocket::SocketError error) {
             on_actionCerrar_triggered();
             break;
 
-        default : break;
+        case QAbstractSocket::HostNotFoundError :
+            QMessageBox::warning(this, WINDOW_WARNING,
+                                 "Dirección del servidor errónea.\nComprueba la dirección y el puerto.");
+            on_actionCerrar_triggered();
+            break;
 
+        case QAbstractSocket::RemoteHostClosedError :
+            QMessageBox::warning(this, WINDOW_WARNING,
+                                 "El servidor ha cerrado la conexión.");
+            conectado =false;
+            socket->close();
+            break;
+
+        default : break;
     }
 
-    on_actionCerrar_triggered();
 }
 
 

@@ -1,6 +1,18 @@
 #include "movieplayer.hpp"
 #include "ui_movieplayer.h"
 
+
+QDataStream &operator >> (QDataStream &in, Captura &captura) {
+
+    in >> captura.cliente
+       >> captura.timestamp
+       >> captura.imagen
+       >> captura.size;
+
+    return in;
+}
+
+
 MoviePlayer::MoviePlayer(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MoviePlayer),
@@ -72,17 +84,6 @@ MoviePlayer::~MoviePlayer() {
 }
 
 
-QDataStream &operator >> (QDataStream &in, Captura &captura) {
-
-    in >> captura.cliente
-       >> captura.timestamp
-       >> captura.imagen
-       >> captura.size;
-
-    return in;
-}
-
-
 /***************************
  MÉTODOS PRIVADOS
 **************************/
@@ -95,7 +96,7 @@ void MoviePlayer::crearLabel() {
     }
 
     label = new QLabel;
-    label->setText("Abra un archivo o capture vídeo...");
+    label->setText("Inicie el servidor...");
     label->setAutoFillBackground(true);
     label->setAlignment(Qt::AlignCenter);
     label->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
@@ -148,21 +149,22 @@ void MoviePlayer::limpiarCamara() {
 
 void MoviePlayer::limpiarServer() {
 
+    if (cliente) {
+        cliente->disconnectFromHost();
+        cliente->waitForDisconnected(100);
+        cliente = NULL;
+    }
+
     if (server) {
         server->close();
         disconnect(server, SIGNAL(newConnection()), this, SLOT(aceptarConexiones()));
+        disconnect(server, SIGNAL(acceptError(QAbstractSocket::SocketError)),
+                    this, SLOT(serverError(QAbstractSocket::SocketError)));
         delete server;
         server = NULL;
     }
 
-    if (cliente) {
-        //cliente->disconnectFromHost();
-        disconnect(cliente, SIGNAL(disconnected()), cliente, SLOT(deleteLater()));
-        disconnect(cliente, SIGNAL(readyRead()), this, SLOT(recibirDatos()));
-        delete cliente;
-        cliente = NULL;
-    }
-
+    label->setText("Inicie el servidor...");
     statusIzda.setText("");
     statusDcha.setText("");
 }
@@ -248,9 +250,11 @@ void MoviePlayer::aceptarConexiones() {
 
     while (server->hasPendingConnections()) {
 
-          cliente = server->nextPendingConnection();
-          connect(cliente, SIGNAL(disconnected()), cliente, SLOT(deleteLater()));
-          connect(cliente, SIGNAL(readyRead()), this, SLOT(recibirDatos()));
+        qDebug() << "Un cliente se ha conectado...";
+
+        cliente = server->nextPendingConnection();
+        connect(cliente, SIGNAL(disconnected()), this, SLOT(disconnected()));
+        connect(cliente, SIGNAL(readyRead()), this, SLOT(recibirDatos()));
     }
 }
 
@@ -280,6 +284,23 @@ void MoviePlayer::recibirDatos() {
 
     // Mostrar imagen
     label->setPixmap(pixmap);
+}
+
+
+void MoviePlayer::disconnected() {
+
+    qDebug() << "Se ha desconectado el cliente...";
+    label->setText("Servidor iniciado...");
+    cliente->disconnectFromHost();
+    cliente->waitForDisconnected(100);
+    cliente->close();
+    cliente->deleteLater();
+}
+
+
+void MoviePlayer::serverError(QAbstractSocket::SocketError error) {
+
+    qDebug() << error;
 }
 
 
@@ -395,6 +416,8 @@ void MoviePlayer::on_actionCapturarDesdeRed_triggered() {
     }
 
     connect(server, SIGNAL(newConnection()), this, SLOT(aceptarConexiones()));
+    connect(server, SIGNAL(acceptError(QAbstractSocket::SocketError)),
+            this, SLOT(serverError(QAbstractSocket::SocketError)));
 
     // Ajustes
     ui->actionCerrar->setEnabled(true);

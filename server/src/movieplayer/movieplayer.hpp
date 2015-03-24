@@ -64,7 +64,6 @@ class MoviePlayer : public QMainWindow {
         void activarFuncionalidades(bool cond);
         void updateVelocidad();
 
-
     private slots:
 
         void setFrameSlider(int frame);
@@ -73,6 +72,8 @@ class MoviePlayer : public QMainWindow {
         void updateImagen(QImage imagen);
         void aceptarConexiones();
         void recibirDatos();
+        void disconnected();
+        void serverError(QAbstractSocket::SocketError error);
 
         // Archivo
         void on_actionAbrir_triggered();
