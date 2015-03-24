@@ -176,7 +176,10 @@ void MoviePlayer::conectarConServidor() {
     // Iniciar conexión con el servidor
     socket = new QTcpSocket(this);
     socket->connectToHost(preferencias.value("ip").toString(),
-                            preferencias.value("puerto").toInt());
+                          preferencias.value("puerto").toInt());
+
+     if(!socket->waitForConnected(5000))
+         qDebug() << "Error: " << socket->errorString();
 
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
 }
@@ -547,10 +550,12 @@ void MoviePlayer::on_actionActivarCache_toggled(bool cond) {
 
 void MoviePlayer::on_actionConfigurarConexion_triggered() {
 
-    Conexion w(preferencias.value("ip").toString(),
+    Conexion w(preferencias.value("usuario").toString(),
+               preferencias.value("ip").toString(),
                preferencias.value("puerto").toInt());
 
     if (w.exec() == QDialog::Accepted) {
+        preferencias.setValue("usuario", w.getUser());
         preferencias.setValue("ip", w.getIp());
         preferencias.setValue("puerto", w.getPort());
     }

@@ -15,9 +15,10 @@ class Conexion : public QDialog {
         Ui::Conexion *ui;
 
     public:
-        explicit Conexion(QString ip = "", quint16 port = 0);
+        explicit Conexion(QString user = "", QString ip = "", quint16 port = 0);
         ~Conexion();
 
+        QString getUser();
         QString getIp();
         quint16 getPort();
 };

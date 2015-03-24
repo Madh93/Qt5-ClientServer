@@ -250,6 +250,8 @@ void MoviePlayer::recibirDatos() {
     QDataStream in(datos);
     in >> saludo;
 
+    socket->waitForBytesWritten(3000);
+
     label->setText(saludo);
 }
 
